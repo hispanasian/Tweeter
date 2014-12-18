@@ -67,7 +67,7 @@ object Relationship extends Module
 
   /**
    * Returns the 'topic' for which the message is categorized when being sent by this Module to the
-   * DistributedPubSubMediator if it is a Message handled by this Module. If the Message is not handeled by this
+   * DistributedPubSubMediator if it is a Message handled by this Module. If the Message is not handled by this
    * Module, the default behavior is to return an empty string. The suggested topic for a Message is the full classpath.
    * @param message The Message for whose 'topic' is being searched
    * @return        The 'topic' associated with Message

@@ -7,4 +7,4 @@ import com.tweeter.module.relationship.RelationshipMessage
  * extend the FollowerMessage
  * Created by Carlos on 12/18/2014.
  */
-trait FollowerdMessage extends RelationshipMessage
+trait FollowerMessage extends RelationshipMessage

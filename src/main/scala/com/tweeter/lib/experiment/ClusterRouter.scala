@@ -29,8 +29,8 @@ object ClusterRouter
             #/client/workerRouter
             {
               #router = consistent-hashing-group
-              #router = adaptive-group
-              router = adaptive-pool
+              router = adaptive-group
+              #router = adaptive-pool
               nr-of-instances = 5
               routees.paths = ["/user/worker"]
               cluster

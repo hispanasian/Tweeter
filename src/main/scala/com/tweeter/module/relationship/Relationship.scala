@@ -1,6 +1,8 @@
 package com.tweeter.module.relationship
 
 import akka.actor._
+import com.tweeter.module.relationship.follower.Follower
+import com.tweeter.module.relationship.friend.Friend
 import com.tweeter.module.{ModuleActor, Module, Message}
 import com.typesafe.config.{ConfigFactory, Config}
 
@@ -54,7 +56,7 @@ object Relationship extends Module
    * Returns the list of modules that this Module loads by default
    * @return  The list of modules that this Module loads by default
    */
-  override protected def defaultModules(): List[Module] = List[Module]()
+  override protected def defaultModules(): List[Module] = List[Module](Friend, Follower)
 
   /**
    * Returns an ActorRef that knows how to route a Message to the correct Actor

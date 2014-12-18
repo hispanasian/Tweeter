@@ -5,7 +5,8 @@ import akka.cluster.Cluster
 import akka.contrib.pattern.DistributedPubSubExtension
 
 /**
- * The ModuleActor will be extended by all Actor Modules for a Module.
+ * The ModuleActor will be extended by all Actor Modules for a Module. The ModuleActor is what does the actual Module
+ * work via Akka Actors.
  * Created by Carlos on 12/16/2014.
  */
 abstract class ModuleActor(components:List[Module]) extends Actor with ActorLogging

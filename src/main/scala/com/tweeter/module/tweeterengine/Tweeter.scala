@@ -1,7 +1,7 @@
 package com.tweeter.module
 
 import akka.actor._
-import com.tweeter.module.relationship.Relationship
+import com.tweeter.module.relationship.{RelationshipMessage, Relationship}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
@@ -72,7 +72,7 @@ object Tweeter extends Engine
 
   /**
    * Returns the 'topic' for which the message is categorized when being sent by this Module to the
-   * DistributedPubSubMediator if it is a Message handeled by this Module. If the Message is not handeled by this
+   * DistributedPubSubMediator if it is a Message handled by this Module. If the Message is not handeled by this
    * Module, the default behavior is to return an empty string. The suggested topic for a Message is the full classpath.
    * @param message The Message for whose 'topic' is being searched
    * @return        The 'topic' associated with Message
@@ -102,8 +102,11 @@ object Tweeter extends Engine
 
 class Tweeter(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
+  val relationshipRouter = Relationship.getModule(context, AKKA())
+
   override def receive: Receive =
   {
+    case x:RelationshipMessage => relationshipRouter ! x
     case x => log.debug(s"$self received unknown message: $x" )
   }
 }

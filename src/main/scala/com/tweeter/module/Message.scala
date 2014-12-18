@@ -16,4 +16,9 @@ trait Message
  * Envelope holds a Message as well as the original ActorRef that sent the message.
  * @param mssg
  */
-case class Envelope(mssg:Message, from:ActorRef)
+case class Envelope(mssg:Message, from:ActorRef) extends Message
+
+/**
+ * This Message tells a ModuleActor to call it's corresponding sub-components start method
+ */
+case class Start() extends Message

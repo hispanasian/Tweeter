@@ -1,38 +1,28 @@
-package com.tweeter.module.tweet
+package com.tweeter.module.tweet.hometimeline
 
-import akka.actor.Actor.Receive
 import akka.actor.{ActorRef, ActorRefFactory}
-import com.tweeter.module.tweet.hometimeline.HomeTimeline
-import com.tweeter.module.tweet.mentionstimeline.MentionsTimeline
-import com.tweeter.module.tweet.retweets.Retweets
-import com.tweeter.module.tweet.tweets.Tweets
-import com.tweeter.module.tweet.usertimeline.{UserTimeline}
+import com.tweeter.module.tweet.{Tweet, TweetMessage}
 import com.tweeter.module.{Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
- * The Tweet Module will provide the tweeting feature to the Tweeter application. This includes tweets, retweets,
- * hashtags, etc. This Module loads the following Modules:
- * Tweets
- * Retweets
- * HomeTimeline
- * UserTimeline
- * MentionsTimeline
+ * The HomeTimeline Module will get a Tweet from a users Followers and update that users home timeline with the new
+ * tweet. The HomeTimeline Module will get the Tweet via it's subscription to the mediator
  * Created by Carlos on 12/18/2014.
  */
-object Tweet extends Module
+object HomeTimeline extends Module
 {
   /**
    * Returns the list of modules that this Module loads by default
    * @return  The list of modules that this Module loads by default
    */
-  override protected def defaultModules(): List[Module] = List[Module](Tweets, Retweets, HomeTimeline, UserTimeline, MentionsTimeline)
+  override protected def defaultModules(): List[Module] = List[Module]()
 
   /**
    * Returns the class of the ModuleActor used by this Module
-   * @return   The class of Tweet
+   * @return   The class of HomeTimeline
    */
-  override protected def getModule(): Class[_ <: ModuleActor] = classOf[Tweet]
+  override protected def getModule(): Class[_ <: ModuleActor] = classOf[HomeTimeline]
 
   /**
    * Returns the routing information used by Spray for this Module.
@@ -41,22 +31,22 @@ object Tweet extends Module
 
   /**
    * Returns the config for this Module
-   * @return  The config for this Module
+   * @return  The config for "hometimeline"
    */
-  override protected def config(): Config = ConfigFactory.load("tweet")
+  override protected def config(): Config = ConfigFactory.load("hometimeline")
 
   /**
    * Returns a List[String] of the roles this Module handles in a cluster.
    * @return   a List[String] of the roles this Module handles in a cluster.
    */
-  override def roles(): List[String] = List[String]("tweet")
+  override def roles(): List[String] = List[String]()
 
   /**
    * Returns the name that this Module is expected to run under when an actor is created. This should be used by
    * the Module's creator to know the path that a particular Actor will have when it is created.
-   * @return "tweet"
+   * @return "hometimeline"
    */
-  override def name(): String = "tweet"
+  override def name(): String = "hometimeline"
 
   /**
    * Returns an ActorRef that knows how to send a Message using REST.
@@ -83,18 +73,21 @@ object Tweet extends Module
   {
     message match
     {
-      case x:TweetMessage => "com.tweeter.module.tweet"
+      case x:HomeTimelineMessage => "com.tweeter.module.tweet.hometimeline.HomeTimelineMessage"
+      case x:TweetMessage => Tweet.getTopic(x)
       case x => ""
     }
   }
 }
 
 /**
- * Tweet will take in a TweetMessage and forward it to the Tweets Module. It will also forward any queries directed at
- * any of the other Modules to said Modules.
- * @param modules The Modules loaded by this ModuleActor
+ * This ModuleActor will provide support for the HomeTimeline Module. The actual work will be done by this ModuleActor
+ * and it's supporting actors. It will obtain the tweets via a subscription to the mediator. HomeTimeline will keep
+ * track of the tweet ids associated with any tweets owned by a user that the User is following and not privately
+ * tweeted.
+ * @param modules
  */
-class Tweet(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
+class HomeTimeline(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
   override def receive: Receive =
   {

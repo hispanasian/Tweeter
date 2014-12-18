@@ -1,6 +1,7 @@
 package com.tweeter.module.relationship.follower
 
 import akka.actor.{ActorRef, ActorRefFactory}
+import com.tweeter.module.relationship.{Relationship, RelationshipMessage}
 import com.tweeter.module.{Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
@@ -71,11 +72,16 @@ object Follower extends Module
     message match
     {
       case x:FollowerMessage => "com.tweeter.module.relationship.FollowerMessage"
+      case x:RelationshipMessage => Relationship.getTopic(x)
       case x => ""
     }
   }
 }
 
+/**
+ * The Follower ModuleActor will keep track of a users followers and support queries on this relationship.
+ * @param modules the Modules loaded by this ModuleActor
+ */
 class Follower(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
   override def receive: Receive =

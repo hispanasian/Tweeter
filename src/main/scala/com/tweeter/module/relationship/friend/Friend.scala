@@ -1,6 +1,7 @@
 package com.tweeter.module.relationship.friend
 
 import akka.actor.{ActorRef, ActorRefFactory}
+import com.tweeter.module.relationship.{Relationship, RelationshipMessage}
 import com.tweeter.module.{Message, Module, ModuleActor}
 import com.typesafe.config.{Config, ConfigFactory}
 
@@ -73,11 +74,17 @@ object Friend extends Module
     message match
     {
       case x:FriendMessage => "com.tweeter.module.relationship.FriendMessage"
+      case x:RelationshipMessage => Relationship.getTopic(x)
       case _ => ""
     }
   }
 }
 
+/**
+ * The Friend ModuleActor will handle any Friend requests. It will essentially create a mapping between two friends and
+ * support queries related to friendships.
+ * @param modules
+ */
 class Friend(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
   override def receive: Receive =

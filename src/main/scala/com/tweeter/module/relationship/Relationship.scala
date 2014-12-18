@@ -89,7 +89,7 @@ object Relationship extends Module
 }
 
 /**
- * Relationship will act as a Router that will route messages for modules
+ * Relationship will act as a Router that will route messages to the Follower Module or the Friend Module.
  * @param modules  The modules used by Relationship
  */
 class Relationship(modules: List[Module] = List[Module]()) extends ModuleActor(modules)

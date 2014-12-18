@@ -7,4 +7,4 @@ import com.tweeter.module.Message
  * TweetMessage
  * Created by Carlos on 12/18/2014.
  */
-class TweetMessage extends Message
+trait TweetMessage extends Message

@@ -38,7 +38,7 @@ object Cache
  * Note: Any CachedObject mapped to a value k is expected to have a unique id for the given mapping.
  * Created by Carlos on 12/18/2014.
  */
-class Cache[K,V <: CachedObject](cacheSize:Int = 100)
+class Cache[K,V <: CachedObject](val cacheSize:Int = 100)
 {
   /**
    * delegate will be the delegate used to perform the operations.
@@ -68,6 +68,7 @@ class Cache[K,V <: CachedObject](cacheSize:Int = 100)
           removed = compareAndSet(key, seq.get, newSeq)
         }
       }
+      else found = false
     }
     return found
   }
@@ -75,20 +76,19 @@ class Cache[K,V <: CachedObject](cacheSize:Int = 100)
   /**
    * Adds element to the front of the Sequence mapped to at key. It also removes the element at the back of the
    * sequence if its size surpasses cacheSize in order to maintain the size of the cache.
-   * @param key     The key of the element being added
-   * @param element The object being added to the Seq at key
+   * @param kv      The key value pair
    * @return        A reference to this object
    */
-  def += (key:K, element:V): Cache[K, V] =
+  def += (kv:(K,V)): Cache[K, V] =
   {
-    val oldSeq= delegate.get(key)
+    val oldSeq= delegate.get(kv._1)
     if(oldSeq != None)
     {
-      var newSeq = element +: oldSeq.get
+      var newSeq = kv._2 +: oldSeq.get
       if(newSeq.size > cacheSize) newSeq = newSeq.dropRight(1)
-      compareAndSet(key, oldSeq.get, newSeq)
+      compareAndSet(kv._1, oldSeq.get, newSeq)
     }
-    else compareAndSet(key, null, Cache.getSeq[V](element))
+    else compareAndSet(kv._1, null, Cache.getSeq[V](kv._2))
     return this;
   }
 
@@ -106,6 +106,12 @@ class Cache[K,V <: CachedObject](cacheSize:Int = 100)
   def iterator: Iterator[(K, Seq[V])] = delegate.iterator
 
   /**
+   * Returns the number of key,sequence pairs.
+   * @return  The number of key,sequence pairs.
+   */
+  def size():Int = delegate.size
+
+  /**
    * A locked compare and set operation on the sequence that is mapped to by k. Every write operation on Cache should
    * use this compareAndSet method in order to enforce thread-safety. While we may not know if oldSeq is the current
    * sequence mapped to on the delegate with key k, we do know that in order for it to be replaced, it must be the
@@ -114,7 +120,18 @@ class Cache[K,V <: CachedObject](cacheSize:Int = 100)
    * method would never write to the delegate and hence we have achieved write-safety. Furthermore, because the delegate
    * maps to an immutable structure, we have gained read-safety for free.
    *
-   * Note: If the current sequence mapped to by k is null, null should be passed in for oldSeq
+   * Note: If the current sequence mapped to by k is null, null should be passed in for oldSeq. In this case, this is
+   * used to synchronized on the compare and set operation. This should rarely happen (only on the initial write for
+   * a key) and for the most part still allows one write multiple read to any sequence assigned to a key except for the
+   * special case that no such sequence yet exists. Even in the special case, we maintain thread-safety because the write
+   * will still only happen if there is no sequence mapped to the key. Should another compareAndSet start and complete
+   * during the middle of this compareAndSet, this operation will fail because even should this operation read the map
+   * for the given key at the same time as another operation, both will see a different Seq and hence at least one
+   * should fail.
+   *
+   * The key to the enforcement of thread-safety in this operation is not in that two threads cannot read the map for
+   * a particular key at the same time (in fact they can), but that two threads cannot read the same Seq mapped to by
+   * key and change it concurrently.
    * @param key      The key of the sequence that is being replaced
    * @param oldSeq   The sequence being replaced
    * @param newSeq   The sequence that is replacing oldSeq
@@ -123,14 +140,18 @@ class Cache[K,V <: CachedObject](cacheSize:Int = 100)
   private final def compareAndSet(key:K, oldSeq:Seq[V], newSeq:Seq[V]):Boolean =
   {
     var replaced = false
-    oldSeq.synchronized
+    var lock:AnyRef = oldSeq
+
+    /* Use self as lock in the case that no List is mapped to the key.  */
+    if(oldSeq == null) lock = this
+    lock.synchronized
     {
       val currentSeq = delegate.get(key)
       if(currentSeq != None || (currentSeq == None && oldSeq == null))
       {
-        if(currentSeq == oldSeq)
+        if(currentSeq == None || currentSeq.get == oldSeq)
         {
-          delegate.replace(key, newSeq)
+          delegate += (key -> newSeq)
           replaced = true
         }
       }

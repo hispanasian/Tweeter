@@ -1,5 +1,6 @@
 package com.tweeter.lib.experiment
 
+import scala.collection.concurrent.TrieMap
 import scala.collection.immutable.Queue
 
 /**
@@ -26,6 +27,16 @@ object QueueVsList
 
     println(s"queue: length: %s with elements %s".format(q.length, q))
     println(s"list: length: %s with elements %s".format(l.length, l))
+
+    val map = new TrieMap[Int, String]()
+    println(s"map has size %s".format(map.size))
+    map.replace(5, "a")
+    println(s"map has size %s".format(map.size))
+    map += (5 ->"a")
+    println(s"map has size %s".format(map.size))
+    map += (5 -> "b")
+    println(s"map has size %s".format(map.size))
+    println("map has element %s".format(map.get(5)))
   }
 
 }

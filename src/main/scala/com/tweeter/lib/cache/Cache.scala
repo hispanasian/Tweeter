@@ -64,7 +64,7 @@ class Cache[K,V <: CachedObject](val cacheSize:Int = 100)
         found = seq.get.exists(_.id == id)
         if(found)
         {
-          val newSeq = seq.get.filter(_.id == id)
+          val newSeq = seq.get.filterNot(_.id == id)
           removed = compareAndSet(key, seq.get, newSeq)
         }
       }

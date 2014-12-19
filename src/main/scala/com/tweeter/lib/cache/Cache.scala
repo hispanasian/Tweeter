@@ -1,7 +1,9 @@
-package com.tweeter.lib
+package com.tweeter.lib.cache
 
-import scala.collection.concurrent.{TrieMap, Map}
-import scala.collection.immutable.{List}
+import com.tweeter.lib.CachedObject
+
+import scala.collection.concurrent.{Map, TrieMap}
+import scala.collection.immutable.List
 
 /**
  * The Cache object will simply act as a Factory for the Cache class. It will provide the Seq used by the Cache class

@@ -13,7 +13,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-contrib"   % akkaVersion,
   "com.typesafe.akka" %% "akka-remote"  % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j"   % akkaVersion,
-  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
+  "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
 )
 
 Revolver.settings

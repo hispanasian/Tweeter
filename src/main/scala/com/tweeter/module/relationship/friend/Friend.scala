@@ -2,7 +2,7 @@ package com.tweeter.module.relationship.friend
 
 import akka.actor.{ActorRef, ActorRefFactory}
 import com.tweeter.module.relationship.{Relationship, RelationshipMessage}
-import com.tweeter.module.{Message, Module, ModuleActor}
+import com.tweeter.module.{Envelope, Message, Module, ModuleActor}
 import com.typesafe.config.{Config, ConfigFactory}
 
 /**
@@ -88,14 +88,14 @@ object Friend extends Module
 class Friend(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
   /**
-   * Processes mssg and sends the response to handler. The final response should be sent back to client.
-   * @param mssg    The mssg that is being processed
-   * @param client  The originator of the request to whom the final response should be sent
-   * @param handler The Actor who should handle the response for mssg
+   * Processes envelope and sends the response to handler. The final response should be sent back to client. If the
+   * receiving Actor does not know who the new handler should be when sending a response to handler, set the new
+   * handler to the current handler.
+   * @param envelope  The envelope that needs to be processed
    */
-  override def process(mssg: Message, client: ActorRef, handler: ActorRef): Unit =
+  override def process(envelope:Envelope):Unit =
   {
-    mssg match
+    envelope.mssg match
     {
       case x => unknownMessage(x)
     }

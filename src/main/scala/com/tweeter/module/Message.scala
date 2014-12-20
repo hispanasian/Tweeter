@@ -22,4 +22,4 @@ trait Message
  * @param replyMessage  A function that defines the type of Message that should be returned to client or handler. This
  *                      defaults to the passed message.
  */
-case class Envelope(mssg:Message, client:ActorRef, handler:ActorRef, replyMessage:(Message => Message) = (x => x)) extends Message
+case class Envelope(mssg:Message, client:ActorRef, handler:ActorRef, replyMessage:(Message => Message) = ((x:Message) => x)) extends Message

@@ -31,7 +31,7 @@ class FollowerWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
       (f.cache.get _) expects(10) returning(None)
       val worker = TestActorRef(new FollowerWorker(f.cache))
       worker ! Envelope(GetFollowers(User(10)), null, f.handler.ref)
-      f.handler.expectMsg(Envelope(Followers(User(10), List[User]()), null, f.handler.ref, (x => x)))
+      f.handler.expectMsg(Envelope(Followers(User(10), List[User]()), null, f.handler.ref))
     }
   it should "add User(10) as a follower of User(5) when it is sent AddFollower(User(5),User(10))" in
     {

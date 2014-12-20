@@ -81,7 +81,7 @@ object Tweeter extends Engine
   {
     message match
     {
-      case x:Message => "com.tweeter.module.Message"
+      case x:Message => classOf[Message].getCanonicalName
       case _ => ""
     }
   }
@@ -104,9 +104,18 @@ class Tweeter(modules: List[Module] = List[Module]()) extends ModuleActor(module
 {
   val relationshipRouter = Relationship.getModule(context, AKKA())
 
-  override def receive: Receive =
+  /**
+   * Processes mssg and sends the response to handler. The final response should be sent back to client.
+   * @param mssg    The mssg that is being processed
+   * @param client  The originator of the request to whom the final response should be sent
+   * @param handler The Actor who should handle the response for mssg
+   */
+  override def process(mssg: Message, client: ActorRef, handler: ActorRef): Unit =
   {
-    case x:RelationshipMessage => relationshipRouter ! x
-    case x => log.debug(s"$self received unknown message: $x" )
+    mssg match
+    {
+      case x:RelationshipMessage => relationshipRouter ! Envelope(x, client, handler)
+      case x => this.unknownMessage(x)
+    }
   }
 }

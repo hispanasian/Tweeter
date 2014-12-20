@@ -1,6 +1,6 @@
 package com.tweeter.lib.cache
 
-import com.tweeter.lib.CachedObject
+import com.tweeter.lib.cache.CachedObject
 import com.tweeter.lib.tests.UnitSpec
 
 /**
@@ -101,8 +101,20 @@ class CacheTest extends UnitSpec {
       val f = fixture
       val e1 = new SomeCachedObject(-5)
       f.cache += (6 -> e1)
-      f.cache.remove(6,-5)
-      println(f.cache.get(6))
+      assert(f.cache.remove(6,-5) == true)
       assert(f.cache.get(6).get.size == 0)
+      assert(f.cache.remove(6,-5) == false)
+    }
+  it should "throw an IllegalArgumentException when being instantiated with a cacheSize less than 1" in
+    {
+      intercept[IllegalArgumentException] {
+        new Cache(0)
+      }
+      intercept[IllegalArgumentException] {
+        new Cache(-5)
+      }
+      intercept[IllegalArgumentException] {
+        new Cache(Int.MinValue)
+      }
     }
 }

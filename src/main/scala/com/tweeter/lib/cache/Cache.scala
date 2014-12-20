@@ -1,7 +1,5 @@
 package com.tweeter.lib.cache
 
-import com.tweeter.lib.CachedObject
-
 import scala.collection.concurrent.{Map, TrieMap}
 import scala.collection.immutable.List
 
@@ -40,6 +38,9 @@ object Cache
  */
 class Cache[K,V <: CachedObject](val cacheSize:Int = 100)
 {
+  /* Validate arguments */
+  if(cacheSize <= 0) throw new IllegalArgumentException("cacheSize must be greater than 0.")
+
   /**
    * delegate will be the delegate used to perform the operations.
    */

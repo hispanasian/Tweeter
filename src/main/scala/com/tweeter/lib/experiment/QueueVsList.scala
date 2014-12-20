@@ -1,5 +1,7 @@
 package com.tweeter.lib.experiment
 
+import com.tweeter.module.relationship.follower.{AddFollower, FollowerMessage}
+
 import scala.collection.concurrent.TrieMap
 import scala.collection.immutable.Queue
 
@@ -37,6 +39,9 @@ object QueueVsList
     map += (5 -> "b")
     println(s"map has size %s".format(map.size))
     println("map has element %s".format(map.get(5)))
+
+    println(classOf[FollowerMessage].getCanonicalName())
+    println(classOf[AddFollower])
   }
 
 }

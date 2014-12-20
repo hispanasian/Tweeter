@@ -76,7 +76,7 @@ object Relationship extends Module
   {
     message match
     {
-      case x:RelationshipMessage => "com.tweeter.module.relationship.RelationshipMessage"
+      case x:RelationshipMessage => classOf[RelationshipMessage].getCanonicalName
       case _ => ""
     }
   }
@@ -104,8 +104,17 @@ class Relationship(modules: List[Module] = List[Module]()) extends ModuleActor(m
 
   }
 
-  override def receive: Receive =
+  /**
+   * Processes mssg and sends the response to handler. The final response should be sent back to client.
+   * @param mssg    The mssg that is being processed
+   * @param client  The originator of the request to whom the final response should be sent
+   * @param handler The Actor who should handle the response for mssg
+   */
+  override def process(mssg: Message, client: ActorRef, handler: ActorRef): Unit =
   {
-    case x => log.debug(s"$self received unknown message: $x")
+    mssg match
+    {
+      case x => unknownMessage(x)
+    }
   }
 }

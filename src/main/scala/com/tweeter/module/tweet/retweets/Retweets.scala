@@ -73,7 +73,7 @@ object Retweets extends Module
   {
     message match
     {
-      case x:RetweetsMessage => "come.tweeter.module.tweet.retweets.RetweetsMessage"
+      case x:RetweetsMessage => classOf[RetweetsMessage].getCanonicalName
       case x:TweetMessage => Tweet.getTopic(x)
       case x => ""
     }
@@ -87,8 +87,17 @@ object Retweets extends Module
  */
 class Retweets(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
-  override def receive: Receive =
+  /**
+   * Processes mssg and sends the response to handler. The final response should be sent back to client.
+   * @param mssg    The mssg that is being processed
+   * @param client  The originator of the request to whom the final response should be sent
+   * @param handler The Actor who should handle the response for mssg
+   */
+  override def process(mssg: Message, client: ActorRef, handler: ActorRef): Unit =
   {
-    case x => log.debug(s"$self received unknown message: $x")
+    mssg match
+    {
+      case x => unknownMessage(x)
+    }
   }
 }

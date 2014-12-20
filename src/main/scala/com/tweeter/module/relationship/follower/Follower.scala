@@ -1,8 +1,10 @@
 package com.tweeter.module.relationship.follower
 
-import akka.actor.{ActorRef, ActorRefFactory}
-import com.tweeter.module.relationship.{Relationship, RelationshipMessage}
-import com.tweeter.module.{Message, ModuleActor, Module}
+import akka.actor.{Props, ActorRef, ActorRefFactory}
+import akka.routing.FromConfig
+import com.tweeter.lib.cache.Cache
+import com.tweeter.module.relationship.{User, Relationship, RelationshipMessage}
+import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
@@ -71,7 +73,7 @@ object Follower extends Module
   {
     message match
     {
-      case x:FollowerMessage => "com.tweeter.module.relationship.FollowerMessage"
+      case x:FollowerMessage => classOf[FollowerMessage].getCanonicalName
       case x:RelationshipMessage => Relationship.getTopic(x)
       case x => ""
     }
@@ -84,9 +86,21 @@ object Follower extends Module
  */
 class Follower(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
-  override def receive: Receive =
+  val cache = new Cache[Int,User]()
+  val workers = context.actorOf(FromConfig.props(Props(classOf[FollowerWorker], cache)), name = "worker")
+
+  /**
+   * Processes mssg and sends the response to handler. The final response should be sent back to client.
+   * @param mssg    The mssg that is being processed
+   * @param client  The originator of the request to whom the final response should be sent
+   * @param handler The Actor who should handle the response for mssg
+   */
+  override def process(mssg: Message, client: ActorRef, handler: ActorRef): Unit =
   {
-    case x:FollowerMessage =>
-    case x => log.debug(s"$self received unknown message: $x")
+    mssg match
+    {
+      case x:FollowerMessage => workers ! Envelope(x, client, handler)
+      case x => unknownMessage(x)
+    }
   }
 }

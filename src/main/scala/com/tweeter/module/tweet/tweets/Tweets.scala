@@ -2,7 +2,7 @@ package com.tweeter.module.tweet.tweets
 
 import akka.actor.{ActorRef, ActorRefFactory}
 import com.tweeter.module.tweet.{Tweet, TweetMessage}
-import com.tweeter.module.{Message, ModuleActor, Module}
+import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
@@ -73,6 +73,7 @@ object Tweets extends Module
   {
     message match
     {
+      case x:TweetsMessage => classOf[TweetsMessage].getCanonicalName
       case x:TweetMessage => Tweet.getTopic(x)
       case x => ""
     }
@@ -88,8 +89,17 @@ object Tweets extends Module
  */
 class Tweets(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
-  override def receive: Receive =
+  /**
+   * Processes mssg and sends the response to handler. The final response should be sent back to client.
+   * @param mssg    The mssg that is being processed
+   * @param client  The originator of the request to whom the final response should be sent
+   * @param handler The Actor who should handle the response for mssg
+   */
+  override def process(mssg: Message, client: ActorRef, handler: ActorRef): Unit =
   {
-    case x => log.debug(s"$self received unknown message: $x")
+    mssg match
+    {
+      case x => this.unknownMessage(x)
+    }
   }
 }

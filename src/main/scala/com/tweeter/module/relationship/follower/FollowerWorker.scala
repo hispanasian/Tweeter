@@ -27,7 +27,7 @@ class FollowerWorker(cache:Cache[Int, User]) extends ClusteredActor
       {
         val option = cache.get(user.id)
         var followers:Seq[User] = null
-        if(option != null) followers = option.get else followers = Cache.getSeq[User]()
+        if(option != None) followers = option.get else followers = Cache.getSeq[User]()
         handler ! Envelope(Followers(user, followers), client, handler)
       }
       case AddFollower(user, follower) =>

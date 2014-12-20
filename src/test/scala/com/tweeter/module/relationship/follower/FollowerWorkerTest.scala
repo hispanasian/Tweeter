@@ -1,8 +1,11 @@
 package com.tweeter.module.relationship.follower
 
-import akka.actor.ActorSystem
-import akka.testkit.{TestKit, TestProbe}
+import akka.actor.{Actor, ActorSystem}
+import akka.testkit.{TestActorRef, TestKit, TestProbe}
+import com.tweeter.lib.cache.Cache
 import com.tweeter.lib.tests.{AkkaSpec}
+import com.tweeter.module.Envelope
+import com.tweeter.module.relationship.User
 import com.typesafe.config.ConfigFactory
 
 /**
@@ -10,16 +13,9 @@ import com.typesafe.config.ConfigFactory
  */
 class FollowerWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
 {
-  val config = ConfigFactory.parseString("""
-    akka
-    {
-      stdout-loglevel="OFF"
-      loglevel = "OFF"
-    }
-                                         """)/*.withFallback(ConfigFactory.load())*/
-  override implicit val system = ActorSystem("FollowerWorkerTestSystem", config)
+  def this() = this(ActorSystem("FollowerWorkerTestSystem", ConfigFactory.load("test").withFallback(ConfigFactory.load("application"))))
 
-  def fixture =
+  def fixture = new
   {
     val probe = TestProbe()
     val handler = TestProbe()
@@ -32,6 +28,8 @@ class FollowerWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
     {
       val f = fixture
       //val m = mock[Cache[Int,CachedObject]]
-      //val worker =
+      val worker = TestActorRef(new FollowerWorker(new Cache[Int, User]()))
+      worker ! Envelope(GetFollowers(User(10)), null, f.handler.ref)
+      f.handler.expectMsg(Envelope(Followers(User(10), List[User]()), null, f.handler.ref))
     }
 }

@@ -32,7 +32,7 @@ abstract class ClusteredActor extends Actor with ActorLogging
 
   final def receive =
   {
-    case Envelope(mssg, client, handler) =>
+    case Envelope(mssg, client, handler) => process(mssg, client, handler)
     case x => unknownMessage(x)
   }
 

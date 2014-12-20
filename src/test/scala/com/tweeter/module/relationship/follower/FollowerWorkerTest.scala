@@ -20,6 +20,7 @@ class FollowerWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
     val probe = TestProbe()
     val handler = TestProbe()
     val client = TestProbe()
+    val cache = mock[Cache[Int,User]]
   }
 
   override def afterAll { TestKit.shutdownActorSystem(system) }
@@ -27,9 +28,13 @@ class FollowerWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
   "A FollowerWorker" should "return an empty list when  a new FollowerWorker is sent a getFollowers message" in
     {
       val f = fixture
-      //val m = mock[Cache[Int,CachedObject]]
-      val worker = TestActorRef(new FollowerWorker(new Cache[Int, User]()))
+      (f.cache.get _) expects(10) returning(None)
+      val worker = TestActorRef(new FollowerWorker(f.cache))
       worker ! Envelope(GetFollowers(User(10)), null, f.handler.ref)
       f.handler.expectMsg(Envelope(Followers(User(10), List[User]()), null, f.handler.ref))
+    }
+  it should "" in
+    {
+
     }
 }

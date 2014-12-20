@@ -1,6 +1,6 @@
 package com.tweeter.lib.cache
 
-import com.tweeter.lib.cache.CachedObject
+import akka.actor.ActorSystem
 import com.tweeter.lib.tests.UnitSpec
 
 /**
@@ -8,7 +8,8 @@ import com.tweeter.lib.tests.UnitSpec
  * thread-safety of the class but will test the methods in a serial manner for serial consistency.
  * Created by Carlos on 12/18/2014.
  */
-class CacheTest extends UnitSpec {
+class CacheTest extends UnitSpec
+{
 
   class SomeCachedObject(id: Int) extends CachedObject(id)
 

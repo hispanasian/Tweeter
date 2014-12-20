@@ -3,7 +3,7 @@ package com.tweeter.module.relationship.follower
 import akka.actor.ActorRef
 import com.tweeter.lib.cache.Cache
 import com.tweeter.module.relationship.User
-import com.tweeter.module.{Message, ClusteredActor}
+import com.tweeter.module.{Envelope, Message, ClusteredActor}
 
 /**
  * FollowerWorker will maintain a Cache that is shared between all the FollowerWorkers on the ActorSystem. It is capable
@@ -23,13 +23,22 @@ class FollowerWorker(cache:Cache[Int, User]) extends ClusteredActor
   {
     mssg match
     {
+      case GetFollowers(user) =>
+      {
+        val option = cache.get(user.id)
+        var followers:Seq[User] = null
+        if(option != null) followers = option.get else followers = Cache.getSeq[User]()
+        handler ! Envelope(Followers(user, followers), client, handler)
+      }
       case AddFollower(user, follower) =>
       {
         cache += (user.id -> follower)
+        // TODO: Respond to handler or client
       }
-      case GetFollowers(user) =>
+      case RemoveFollower(user, follower) =>
       {
-
+        cache.remove(user.id, follower.id)
+        // TODO: Respond to handler or client
       }
       case x => unknownMessage(x)
     }

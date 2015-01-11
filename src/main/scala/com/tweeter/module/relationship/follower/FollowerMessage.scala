@@ -11,7 +11,7 @@ trait FollowerMessage extends RelationshipMessage
 
 /**
  * Message requesting the followers for the user with the given uid
- * @param uid The user who's follower we are looking for
+ * @param uid The user who's followers are being queried
  */
 case class GetFollowers(uid:User) extends FollowerMessage
 

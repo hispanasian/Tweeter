@@ -34,7 +34,7 @@ class FollowerWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
       val worker = TestActorRef(new FollowerWorker(f.cache))
       worker ! Envelope(GetFollowers(User(10)), f.client.ref, f.handler.ref, replyMessage)
       val expectedMssg = Followers(User(10), List[User]())
-      f.handler.expectMsgPF(hint="Message is an Envelope with mssg=$expectedMssg, client=client.ref, handler=handler.ref and reply should return a Message")
+      f.handler.expectMsgPF(hint="Message is an Envelope with mssg=expectedMssg, client=client.ref, handler=handler.ref and reply should return a Message")
       {
         case Envelope(mssg,client, handler, reply) =>
           mssg should equal (expectedMssg)

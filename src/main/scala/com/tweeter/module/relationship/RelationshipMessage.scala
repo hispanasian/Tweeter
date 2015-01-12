@@ -10,10 +10,11 @@ import com.tweeter.module.Message
 trait RelationshipMessage extends Message
 
 /**
- * A User is simply a uid associated with a user. It is bare bones and does not store any other User information.
+ * A User is simply a uid associated with a user. It is bare bones and does not store any other User information. uid
+ * defaults to 0
  * @param uid The unique ID of the user
  */
-case class User(uid:Int) extends CachedObject(uid) with RelationshipMessage
+case class User(uid:Int = 0) extends CachedObject(uid) with RelationshipMessage
 
 /**
  * A HydratedUser contains all the pertinent information related to the user associated with uid

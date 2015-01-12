@@ -1,9 +1,8 @@
 package com.tweeter.module.relationship.follower
 
-import akka.actor.ActorRef
 import com.tweeter.lib.cache.Cache
 import com.tweeter.module.relationship.User
-import com.tweeter.module.{Envelope, Message, ClusteredActor}
+import com.tweeter.module.{Envelope, ClusteredActor}
 
 /**
  * FollowerWorker will maintain a Cache that is shared between all the FollowerWorkers on the ActorSystem. It is capable

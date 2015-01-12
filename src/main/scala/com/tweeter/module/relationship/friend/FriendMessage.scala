@@ -13,7 +13,7 @@ trait FriendMessage extends RelationshipMessage
  * Message requesting the friends for the user with the given uid
  * @param uid The user who's friends are being queried.
  */
-case class GetFriend(uid:User) extends FriendMessage
+case class GetFriends(uid:User) extends FriendMessage
 
 /**
  * Message requesting the addition of friend as a friend of user
@@ -27,7 +27,7 @@ case class AddFriend(user:User, friend:User) extends FriendMessage
  * @param user    The user who is losing a friend
  * @param friend  The friend who is being removed from user
  */
-case class RemoveFriend(user:User, friend:Friend) extends FriendMessage
+case class RemoveFriend(user:User, friend:User) extends FriendMessage
 
 /**
  * Message containing the sequence of friends whoa re following user

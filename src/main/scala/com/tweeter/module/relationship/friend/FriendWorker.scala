@@ -16,7 +16,23 @@ class FriendWorker(cache:Cache[Int, User]) extends ClusteredActor
   {
     e.mssg match
     {
-      case GetFriend(user)
+      case GetFriends(user) =>
+      {
+        val option = cache.get(user.id)
+        var friends:Seq[User] = Seq[User]()
+        if(option != None) friends = option.get
+        e.handler ! Envelope(e.replyMessage(Friends(user, friends)), e.client, e.handler)
+      }
+      case AddFriend(user, friend) =>
+      {
+        cache += (user.id -> friend)
+        // TODO: Respond to handler or client
+      }
+      case RemoveFriend(user, friend) =>
+      {
+        cache.remove(user.id, friend.id)
+        // TODO: Respond to handler or client
+      }
       case x => unknownMessage()
     }
   }

@@ -15,7 +15,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-slf4j"   % akkaVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "test",
-  "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
+  "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
+  "org.slf4j" % "slf4j-simple" % "1.6.4"
 )
 
 Revolver.settings

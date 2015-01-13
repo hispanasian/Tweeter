@@ -13,7 +13,7 @@ import com.typesafe.config.ConfigFactory
  */
 class FollowerWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
 {
-  def this() = this(ActorSystem("FollowerWorkerTestSystem", ConfigFactory.load("test").withFallback(ConfigFactory.load("application"))))
+  def this() = this(ActorSystem("GUIDGeneratorTestSystem", ConfigFactory.parseString("""akka.remote.netty.tcp.port="3000"""").withFallback(ConfigFactory.load("test").withFallback(ConfigFactory.load("application")))))
 
   def fixture = new
   {
@@ -23,7 +23,7 @@ class FollowerWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
     val cache = mock[Cache[Int,User]]
   }
 
-  override def afterAll { TestKit.shutdownActorSystem(system) }
+  override def afterAll { TestKit.shutdownActorSystem(system); system.shutdown() }
 
   "A FollowerWorker" should "return an empty list when a new FollowerWorker is sent a getFollowers message" in
     {

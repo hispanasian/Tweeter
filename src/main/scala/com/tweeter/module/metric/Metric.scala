@@ -5,7 +5,7 @@ import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
- * The Tweet Module will deal with aggregating the Tweeter metrics (number of tweets per second, etc.) by subscribing
+ * The TweetModule Module will deal with aggregating the Tweeter metrics (number of tweets per second, etc.) by subscribing
  * to the various messages published by the Tweeter application.
  * Created by Carlos on 12/18/2014.
  */

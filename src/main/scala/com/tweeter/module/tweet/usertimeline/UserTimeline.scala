@@ -1,7 +1,7 @@
 package com.tweeter.module.tweet.usertimeline
 
 import akka.actor.{ActorRef, ActorRefFactory}
-import com.tweeter.module.tweet.{Tweet, TweetMessage}
+import com.tweeter.module.tweet.{TweetModule, TweetMessage}
 import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
@@ -73,7 +73,7 @@ object UserTimeline extends Module
     message match
     {
       case x:UserTimelineMessage => classOf[UserTimelineMessage].getCanonicalName
-      case x:TweetMessage => Tweet.getTopic(x)
+      case x:TweetMessage => TweetModule.getTopic(x)
       case x => ""
     }
   }

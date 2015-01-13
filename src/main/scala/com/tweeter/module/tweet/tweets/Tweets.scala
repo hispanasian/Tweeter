@@ -1,13 +1,13 @@
 package com.tweeter.module.tweet.tweets
 
 import akka.actor.{ActorRef, ActorRefFactory}
-import com.tweeter.module.tweet.{Tweet, TweetMessage}
+import com.tweeter.module.tweet.{TweetModule, TweetMessage}
 import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
- * The Tweets Module will provide concrete Tweets to the Tweet module. This is the module that will effectively handle
- * every Tweet and then publish them for any other interested Modules.
+ * The Tweets Module will provide concrete Tweets to the TweetModule module. This is the module that will effectively handle
+ * every TweetModule and then publish them for any other interested Modules.
  * Created by Carlos on 12/18/2014.
  */
 object Tweets extends Module
@@ -74,16 +74,16 @@ object Tweets extends Module
     message match
     {
       case x:TweetsMessage => classOf[TweetsMessage].getCanonicalName
-      case x:TweetMessage => Tweet.getTopic(x)
+      case x:TweetMessage => TweetModule.getTopic(x)
       case x => ""
     }
   }
 }
 
 /**
- * Tweets will be forwarded any TweetMessage obtained by the Tweet Module. The only Module this ModuleActor will
+ * Tweets will be forwarded any TweetMessage obtained by the TweetModule Module. The only Module this ModuleActor will
  * potentially forward tweets to is the Retweets Module. Any other Modules will need to subscribe to the TweetMessage
- * Message in order to obtain the Tweets processed by this Module. This ModuleActor or sub-Modules will take in a Tweet,
+ * Message in order to obtain the Tweets processed by this Module. This ModuleActor or sub-Modules will take in a TweetModule,
  * assign it a tweet id, and then store it in a database/cache of tweets.
  * @param modules The modules loaded by this Module
  */

@@ -1,6 +1,5 @@
 package com.tweeter.module.tweet
 
-import akka.actor.Actor.Receive
 import akka.actor.{ActorRef, ActorRefFactory}
 import com.tweeter.module.tweet.hometimeline.HomeTimeline
 import com.tweeter.module.tweet.mentionstimeline.MentionsTimeline
@@ -11,7 +10,7 @@ import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
- * The Tweet Module will provide the tweeting feature to the Tweeter application. This includes tweets, retweets,
+ * The TweetModule Module will provide the tweeting feature to the Tweeter application. This includes tweets, retweets,
  * hashtags, etc. This Module loads the following Modules:
  * Tweets
  * Retweets
@@ -20,7 +19,7 @@ import com.typesafe.config.{ConfigFactory, Config}
  * MentionsTimeline
  * Created by Carlos on 12/18/2014.
  */
-object Tweet extends Module
+object TweetModule extends Module
 {
   /**
    * Returns the list of modules that this Module loads by default
@@ -30,9 +29,9 @@ object Tweet extends Module
 
   /**
    * Returns the class of the ModuleActor used by this Module
-   * @return   The class of Tweet
+   * @return   The class of TweetModule
    */
-  override protected def getModule(): Class[_ <: ModuleActor] = classOf[Tweet]
+  override protected def getModule(): Class[_ <: ModuleActor] = classOf[TweetModule]
 
   /**
    * Returns the routing information used by Spray for this Module.
@@ -90,11 +89,11 @@ object Tweet extends Module
 }
 
 /**
- * Tweet will take in a TweetMessage and forward it to the Tweets Module. It will also forward any queries directed at
+ * TweetModule will take in a TweetMessage and forward it to the Tweets Module. It will also forward any queries directed at
  * any of the other Modules to said Modules.
  * @param modules The Modules loaded by this ModuleActor
  */
-class Tweet(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
+class TweetModule(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
   /**
    * Processes envelope and sends the response to handler. The final response should be sent back to client. If the

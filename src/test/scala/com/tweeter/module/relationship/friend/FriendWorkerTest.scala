@@ -14,7 +14,7 @@ import com.typesafe.config.ConfigFactory
  */
 class FriendWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
 {
-  def this() = this(ActorSystem("FriendWorkerTestSystem", ConfigFactory.load("test").withFallback(ConfigFactory.load("application"))))
+  def this() = this(ActorSystem("GUIDGeneratorTestSystem", ConfigFactory.parseString("""akka.remote.netty.tcp.port="3001"""").withFallback(ConfigFactory.load("test").withFallback(ConfigFactory.load("application")))))
 
   def fixture = new
     {
@@ -24,7 +24,7 @@ class FriendWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
       val cache = mock[Cache[Int,User]]
     }
 
-  override def afterAll { TestKit.shutdownActorSystem(system) }
+  override def afterAll { TestKit.shutdownActorSystem(system); system.shutdown() }
 
   "A FriendWorker" should "reply to the handler with Friends(User(10),List[]) when receiving a GetFriends(User(10))" in
     {

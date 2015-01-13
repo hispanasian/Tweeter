@@ -1,12 +1,12 @@
 package com.tweeter.module.tweet.retweets
 
 import akka.actor.{ActorRef, ActorRefFactory}
-import com.tweeter.module.tweet.{Tweet, TweetMessage}
+import com.tweeter.module.tweet.{TweetModule, TweetMessage}
 import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
- * This Module will handle Retweets. This Module will get pushed any Tweet Messages that are re-tweets from the Tweets
+ * This Module will handle Retweets. This Module will get pushed any TweetModule Messages that are re-tweets from the Tweets
  * Module and will allow for queries on current re-tweets.
  * Created by Carlos on 12/18/2014.
  */
@@ -74,14 +74,14 @@ object Retweets extends Module
     message match
     {
       case x:RetweetsMessage => classOf[RetweetsMessage].getCanonicalName
-      case x:TweetMessage => Tweet.getTopic(x)
+      case x:TweetMessage => TweetModule.getTopic(x)
       case x => ""
     }
   }
 }
 
 /**
- * Retweets will be forwarded a tweet from the Tweets Module or it will be forwarded a query from the Tweet Modules and
+ * Retweets will be forwarded a tweet from the Tweets Module or it will be forwarded a query from the TweetModule Modules and
  * process the query/tweet. This should only be forwarded tweets that are known re-tweets.
  * @param modules The Modules loaded by this ModuleActor
  */

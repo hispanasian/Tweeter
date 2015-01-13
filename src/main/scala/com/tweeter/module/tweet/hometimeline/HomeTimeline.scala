@@ -1,13 +1,13 @@
 package com.tweeter.module.tweet.hometimeline
 
 import akka.actor.{ActorRef, ActorRefFactory}
-import com.tweeter.module.tweet.{Tweet, TweetMessage}
+import com.tweeter.module.tweet.{TweetModule, TweetMessage}
 import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
 /**
- * The HomeTimeline Module will get a Tweet from a users Followers and update that users home timeline with the new
- * tweet. The HomeTimeline Module will get the Tweet via it's subscription to the mediator
+ * The HomeTimeline Module will get a TweetModule from a users Followers and update that users home timeline with the new
+ * tweet. The HomeTimeline Module will get the TweetModule via it's subscription to the mediator
  * Created by Carlos on 12/18/2014.
  */
 object HomeTimeline extends Module
@@ -74,7 +74,7 @@ object HomeTimeline extends Module
     message match
     {
       case x:HomeTimelineMessage => classOf[HomeTimelineMessage].getCanonicalName
-      case x:TweetMessage => Tweet.getTopic(x)
+      case x:TweetMessage => TweetModule.getTopic(x)
       case x => ""
     }
   }

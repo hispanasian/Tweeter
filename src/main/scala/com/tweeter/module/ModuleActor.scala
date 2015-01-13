@@ -1,7 +1,5 @@
 package com.tweeter.module
 
-import akka.actor.{ActorLogging, Actor}
-
 /**
  * The ModuleActor will be extended by all Actor Modules for a Module. The ModuleActor is what does the actual Module
  * work via Akka Actors.

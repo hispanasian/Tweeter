@@ -1,7 +1,7 @@
 package com.tweeter.module.tweet.mentionstimeline
 
 import akka.actor.{ActorRef, ActorRefFactory}
-import com.tweeter.module.tweet.{Tweet, TweetMessage}
+import com.tweeter.module.tweet.{TweetModule, TweetMessage}
 import com.tweeter.module.{Envelope, Message, ModuleActor, Module}
 import com.typesafe.config.{ConfigFactory, Config}
 
@@ -74,7 +74,7 @@ object MentionsTimeline extends Module
     message match
     {
       case x:MentionsTimelineMessage => classOf[MentionsTimelineMessage].getCanonicalName
-      case x:TweetMessage => Tweet.getTopic(x)
+      case x:TweetMessage => TweetModule.getTopic(x)
       case x => ""
     }
   }

@@ -9,7 +9,7 @@ import com.typesafe.config.{ConfigFactory, Config}
  * expected to be the starting point for the application.
  *
  * Modules:
- * Tweet
+ * TweetModule
  * Relationship
  * Metric
  * Created by Carlos on 12/17/2014.

@@ -1,7 +1,9 @@
 package com.tweeter.module.relationship.friend
 
-import akka.actor.{ActorRef, ActorRefFactory}
-import com.tweeter.module.relationship.{Relationship, RelationshipMessage}
+import akka.actor.{Props, ActorRef, ActorRefFactory}
+import akka.routing.FromConfig
+import com.tweeter.lib.cache.Cache
+import com.tweeter.module.relationship.{User, Relationship, RelationshipMessage}
 import com.tweeter.module.{Envelope, Message, Module, ModuleActor}
 import com.typesafe.config.{Config, ConfigFactory}
 
@@ -87,6 +89,9 @@ object Friend extends Module
  */
 class Friend(modules: List[Module] = List[Module]()) extends ModuleActor(modules)
 {
+  val cache = new Cache[Int,User]()
+  val workers = context.actorOf(FromConfig.props(Props(classOf[FriendWorker], cache)), name = "worker")
+
   /**
    * Processes envelope and sends the response to handler. The final response should be sent back to client. If the
    * receiving Actor does not know who the new handler should be when sending a response to handler, set the new
@@ -97,6 +102,7 @@ class Friend(modules: List[Module] = List[Module]()) extends ModuleActor(modules
   {
     envelope.mssg match
     {
+      case x:FriendMessage => workers ! x
       case x => unknownMessage(x)
     }
   }

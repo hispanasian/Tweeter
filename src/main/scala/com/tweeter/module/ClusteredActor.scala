@@ -28,7 +28,7 @@ abstract class ClusteredActor extends Actor with ActorLogging
    */
   def process(envelope:Envelope):Unit
 
-  final def receive =
+  def receive =
   {
     case x:Envelope => process(x)
     case x => unknownMessage(x)

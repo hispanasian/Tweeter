@@ -2,6 +2,7 @@ package com.tweeter.module.tweet.tweets
 
 import akka.actor.ActorRef
 import com.tweeter.module.{Envelope, ClusteredActor}
+import scala.collection.immutable.Queue
 
 /**
  * TweetsWorker receives HydratedTweets and assigns a unique guid to the HydratedTweet which it then stores in a
@@ -16,8 +17,10 @@ import com.tweeter.module.{Envelope, ClusteredActor}
  * @param cache         The thread-safe Map that will map the tids to the HydratedTweet objects
  * @param guidGenerator The ActorRef to the unique GUIDGenerator in the cluster
  */
-class TweetsWorker(cache:Map[Int,HydratedTweet], guidGenerator:ActorRef) extends ClusteredActor
+class TweetsWorker(cache:collection.mutable.Map[Int,HydratedTweet], guidGenerator:ActorRef) extends ClusteredActor
 {
+  var queue:Seq[HydratedTweet] = Queue[HydratedTweet]()
+
   override def receive =
   {
     case x:Envelope => process(x)

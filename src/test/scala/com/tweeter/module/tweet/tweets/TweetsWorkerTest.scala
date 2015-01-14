@@ -1,8 +1,10 @@
 package com.tweeter.module.tweet.tweets
 
 import akka.actor.ActorSystem
-import akka.testkit.{TestKit, TestProbe}
+import akka.testkit.{TestActorRef, TestKit, TestProbe}
+import com.tweeter.lib.guidgenerator.{GUIDBlock, GetGUIDBlock}
 import com.tweeter.lib.tests.AkkaSpec
+import com.tweeter.module.relationship.User
 import com.typesafe.config.ConfigFactory
 
 /**
@@ -20,12 +22,27 @@ class TweetsWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
       val probe = TestProbe()
       val handler = TestProbe()
       val client = TestProbe()
-      val cache = mock[Map[Int,HydratedTweet]]
+      val cache = mock[collection.mutable.Map[Int,Int]]
+      val sender = TestProbe()
+      val guidGenerator = TestProbe()
     }
 
   "A TweetsWorker" should "queue a Tweet to be stored/cached if it has not received a GUIDBlock (it was just initialized)" in
     {
-
+      val f = fixture
+      val worker = TestActorRef(new TweetsWorker(f.cache, f.guidGenerator.ref))
+      val tweet = HydratedTweet(0,"tweet", User(0), null, List[User](), null, "")
+      f.sender.send(worker, AddTweet(tweet))
+      inSequence
+      {
+        inAnyOrder
+        {
+          f.guidGenerator.expectMsg(GetGUIDBlock)
+          assert(worker.underlyingActor.queue == List[HydratedTweet](tweet))
+        }
+        f.guidGenerator.send(worker, GUIDBlock(0,10))
+        (f.cache.+= _) expects(0 -> tweet)
+      }
     }
   it should "queue a Tweet to be stored/cached if it has consumed a GUIDBlock" in
     {
@@ -40,6 +57,10 @@ class TweetsWorkerTest(_system:ActorSystem) extends AkkaSpec(_system)
 
     }
   it should "request a new GUIDBlock when it is half way through it's current GUIDBlock" in
+    {
+
+    }
+  it should "request a new GUIDBlock if it gets an invalid GUIDBlock (a negative guid or blockSize)" in
     {
 
     }

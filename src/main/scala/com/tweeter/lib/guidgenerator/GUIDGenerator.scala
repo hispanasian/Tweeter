@@ -1,7 +1,6 @@
 package com.tweeter.lib.guidgenerator
 
 import akka.actor.{Props, ActorSystem, Actor, ActorLogging}
-import akka.cluster.Cluster
 import com.typesafe.config.ConfigFactory
 
 object GUIDGenerator
